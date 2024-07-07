@@ -1,4 +1,4 @@
-# Rethinking Score Distillation as a Bridge Between Image Distributions
+# SDS-Bridge
 
 ### [Project Page](https://sds-bridge.github.io/) | [Paper](https://arxiv.org/abs/2406.09417) 
 
