@@ -5,7 +5,7 @@ https://github.com/davidmcall/SDS-Bridge/assets/50497963/31ccf4f7-9211-4678-bdd0
 
 ## Experimenting in 2D
 
-We offer a simpler installation than Threestudio with minimal dependencies if you just want to run experiments in 2D. 
+We offer a simpler installation than Threestudio with minimal dependencies if you just want to run experiments in 2D. This installation guide is adapted from [Nerfstudio]([https://docs.nvidia.com/cuda/cuda-quick-start-guide/index.html](https://github.com/nerfstudio-project/nerfstudio))
 
 ### Prerequisites
 
