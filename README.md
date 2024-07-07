@@ -37,7 +37,7 @@ cd 2D_experiments
 pip install -r requirements.txt
 ```
 
-### Run 2D Generation
+### Run 2D Optimization
 
 In the `2D_experiments` directory...
 
