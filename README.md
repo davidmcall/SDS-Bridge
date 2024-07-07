@@ -7,6 +7,32 @@
 https://github.com/davidmcall/SDS-Bridge/assets/50497963/31ccf4f7-9211-4678-bdd0-4aaaccfa6853
 
 
+## Experimenting in 3D
+
+We provide our code for text-based NeRF optimization as an extension in the threestudio. To use it, please first install threestudio following the [official instructions](https://github.com/threestudio-project/threestudio?tab=readme-ov-file#installation).
+
+### Extension Installation
+
+```bash
+cp -r ./threestudio-sds-bridge ../threestudio/custom/
+cd ../threestudio
+```
+
+### Run 3D Optimization
+
+In the `threestudio` repo...
+
+```bash
+python launch.py --config custom/threestudio-sds-bridge/configs/sds-bridge.yaml --train --gpu 0 system.prompt_processor.prompt="a pineapple"
+```
+
+Some options to play with for sds-bridge guidance are:
+* `system.guidance.stage_two_start_step` The step at which to switch to the second stage.
+* `system.guidance.stage_two_weight` The weight of the second stage.
+* `system.prompt_processor.src_modifier` The prompt modfier that describes the current source distribution, e.g. "oversaturated, smooth, pixelated, cartoon, foggy, hazy, blurry, bad structure, noisy, malformed."
+* `system.prompt_processor.tgt_modifier` The prompt modfier that describes the target distribution, e.g. " detailed, high resolution, high quality, sharp."
+
+
 ## Experimenting in 2D
 
 We offer a simpler installation than Threestudio with minimal dependencies if you just want to run experiments in 2D. This installation guide is adapted from [Nerfstudio](https://github.com/nerfstudio-project/nerfstudio)
@@ -15,7 +41,7 @@ We offer a simpler installation than Threestudio with minimal dependencies if yo
 
 You must have an NVIDIA video card with CUDA installed on the system. This project has been tested with version 11.8 of CUDA. You can find more information about installing CUDA [here](https://docs.nvidia.com/cuda/cuda-quick-start-guide/index.html)
 
-### Create environment
+### Create Environment
 
 This repository requires `python >= 3.8`. We recommend using conda to manage dependencies. Make sure to install [Conda](https://docs.conda.io/miniconda.html) before proceeding.
 
@@ -56,31 +82,6 @@ See `generate.py` for more options, including but not limited to:
 * `--lr` Learning rate
 * `--cfg_scale` Scale of classifier-free guidance computation
 
-
-## Experimenting in 3D
-
-We provide our code for text-based NeRF optimization as an extension in the threestudio. To use it, please first install threestudio following the official instructions.
-
-### Installation
-
-```bash
-cp -r ./threestudio-sds-bridge ../threestudio/custom/
-cd ../threestudio
-```
-
-### Run 3D Optimization
-
-In the `threestudio` repo...
-
-```bash
-python launch.py --config custom/threestudio-sds-bridge/configs/sds-bridge.yaml --train --gpu 0 system.prompt_processor.prompt="a pineapple"
-```
-
-Some options to play with for sds-bridge guidance are:
-* `system.guidance.stage_two_start_step` The step at which to switch to the second stage.
-* `system.guidance.stage_two_weight` The weight of the second stage.
-* `system.prompt_processor.src_modifier` The prompt modfier that describes the current source distribution, e.g. "oversaturated, smooth, pixelated, cartoon, foggy, hazy, blurry, bad structure, noisy, malformed."
-* `system.prompt_processor.tgt_modifier` The prompt modfier that describes the target distribution, e.g. " detailed, high resolution, high quality, sharp."
 
 
 ## Citation
