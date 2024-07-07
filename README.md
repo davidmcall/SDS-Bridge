@@ -1,4 +1,4 @@
-# SDS-Bridge
+# Rethinking Score Distillation as a Bridge Between Image Distributions
 
 https://github.com/davidmcall/SDS-Bridge/assets/50497963/31ccf4f7-9211-4678-bdd0-4aaaccfa6853
 
