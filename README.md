@@ -1,5 +1,7 @@
 # Rethinking Score Distillation as a Bridge Between Image Distributions
 
+Official implementation of [Rethinking Score Distillation as a Bridge Between Image Distributions](https://arxiv.org/abs/2406.09417)
+
 https://github.com/davidmcall/SDS-Bridge/assets/50497963/31ccf4f7-9211-4678-bdd0-4aaaccfa6853
 
 
@@ -46,4 +48,8 @@ In the `2D_experiments` directory...
 python generate.py
 ```
 
-See `generate.py` for more options.
+See `generate.py` for more options, including but not limited to:
+* `--mode` Choose between SDS-like loss functions [bridge (ours)](https://sds-bridge.github.io/), [SDS](https://dreamfusion3d.github.io), [NFSD](https://orenkatzir.github.io/nfsd/), [VSD](https://ml.cs.tsinghua.edu.cn/prolificdreamer/)
+* `--seed` Random seed
+* `--lr` Learning rate
+* `--cfg_scale` Scale of classifier-free guidance computation
