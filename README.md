@@ -1,6 +1,8 @@
 # Rethinking Score Distillation as a Bridge Between Image Distributions
 
-Official implementation of [Rethinking Score Distillation as a Bridge Between Image Distributions](https://arxiv.org/abs/2406.09417)
+### [Project Page](https://sds-bridge.github.io/) | [Paper](https://arxiv.org/abs/2406.09417) 
+
+**TLDR:** A unified framework to explain SDS and its variants, plus a new method that is fast & high-quality.
 
 https://github.com/davidmcall/SDS-Bridge/assets/50497963/31ccf4f7-9211-4678-bdd0-4aaaccfa6853
 
@@ -53,3 +55,41 @@ See `generate.py` for more options, including but not limited to:
 * `--seed` Random seed
 * `--lr` Learning rate
 * `--cfg_scale` Scale of classifier-free guidance computation
+
+
+## Experimenting in 3D
+
+We provide our code for text-based NeRF optimization as an extension in the threestudio. To use it, please first install threestudio following the official instructions.
+
+### Installation
+
+```bash
+cp -r ./threestudio-sds-bridge ../threestudio/custom/
+cd ../threestudio
+```
+
+### Run 3D Optimization
+
+In the `threestudio` repo...
+
+```bash
+python launch.py --config custom/threestudio-sds-bridge/configs/sds-bridge.yaml --train --gpu 0 system.prompt_processor.prompt="a pineapple"
+```
+
+Some options to play with for sds-bridge guidance are:
+* `system.guidance.stage_two_start_step` The step at which to switch to the second stage.
+* `system.guidance.stage_two_weight` The weight of the second stage.
+* `system.prompt_processor.src_modifier` The prompt modfier that describes the current source distribution, e.g. "oversaturated, smooth, pixelated, cartoon, foggy, hazy, blurry, bad structure, noisy, malformed."
+* `system.prompt_processor.tgt_modifier` The prompt modfier that describes the target distribution, e.g. " detailed, high resolution, high quality, sharp."
+
+
+## Citation
+
+``` bibtex
+@article{mcallister2024rethinking,
+    title={Rethinking Score Distillation as a Bridge Between Image Distributions},
+    author={David McAllister and Songwei Ge and Jia-Bin Huang and David W. Jacobs and Alexei A. Efros and Aleksander Holynski and Angjoo Kanazawa},
+    journal={arXiv preprint arXiv:2406.09417},
+    year={2024}
+  }
+```

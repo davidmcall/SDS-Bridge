@@ -50,9 +50,9 @@ class SDSBridgeGuidance(BaseObject):
         """Configs for SDS-Bridges"""
         num_inference_steps: int = 500
         guidance_scale: float = 100.0
-        stage1_weight: float = 1.
-        stage2_weight: float = 100.
-        stage2_start_step: int = 20000
+        stage_one_weight: float = 1.
+        stage_two_weight: float = 100.
+        stage_two_start_step: int = 20000
 
 
     cfg: Config
@@ -217,11 +217,11 @@ class SDSBridgeGuidance(BaseObject):
             if self.phase_id == 1:
                 w = (1 - self.alphas[t]).view(-1, 1, 1, 1)
                 noise_pred_sds = noise_pred_text_src + self.cfg.guidance_scale * (noise_pred_text_tgt - noise_pred_text_src)
-                noise_pred = self.cfg.stage1_weight * w * noise_pred_sds
-                noise = self.cfg.stage1_weight * w * noise
+                noise_pred = self.cfg.stage_one_weight * w * noise_pred_sds
+                noise = self.cfg.stage_one_weight * w * noise
             elif self.phase_id == 2:
-                noise_pred = self.cfg.stage2_weight * noise_pred_text_tgt
-                noise = self.cfg.stage2_weight * noise_pred_text_src
+                noise_pred = self.cfg.stage_two_weight * noise_pred_text_tgt
+                noise = self.cfg.stage_two_weight * noise_pred_text_src
 
 
         if self.cfg.weighting_strategy == "sds":

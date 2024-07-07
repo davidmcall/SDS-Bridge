@@ -43,7 +43,7 @@ class SDSBridge(BaseLift3DSystem):
     def training_step(self, batch, batch_idx):
         out = self(batch)
 
-        if self.true_global_step == self.guidance.cfg.stage2_start_step:
+        if self.true_global_step == self.guidance.cfg.stage_two_start_step:
             threestudio.info(f"Moving to stage 2 at step {self.true_global_step}")
             self.guidance.phase_id = 2
 
