@@ -1,21 +1,21 @@
+import gc
+from contextlib import contextmanager
 from dataclasses import dataclass
 
 import numpy as np
-import gc
 import torch
 import torch.nn.functional as F
 from diffusers import DDIMScheduler, DiffusionPipeline
-from contextlib import contextmanager
-from jaxtyping import Float
-from typing import Literal, Union, Tuple
-import matplotlib.pyplot as plt
 from diffusers.loaders import AttnProcsLayers
 from diffusers.models.attention_processor import LoRAAttnProcessor
 from diffusers.models.embeddings import TimestepEmbedding
+from jaxtyping import Float
+
 
 def cleanup():
     gc.collect()
     torch.cuda.empty_cache()
+
 
 class ToWeightsDType(torch.nn.Module):
     def __init__(self, module: torch.nn.Module, dtype: torch.dtype):
@@ -25,6 +25,7 @@ class ToWeightsDType(torch.nn.Module):
 
     def forward(self, x: Float[torch.Tensor, "..."]) -> Float[torch.Tensor, "..."]:
         return self.module(x).to(self.dtype)
+
 
 @dataclass
 class GuidanceConfig:
@@ -53,7 +54,9 @@ class Guidance(object):
         self.config = config
         self.device = torch.device(config.device)
 
-        self.pipe = DiffusionPipeline.from_pretrained(config.sd_pretrained_model_or_path).to(self.device)
+        self.pipe = DiffusionPipeline.from_pretrained(
+            config.sd_pretrained_model_or_path
+        ).to(self.device)
 
         self.scheduler = DDIMScheduler.from_config(self.pipe.scheduler.config)
         self.scheduler.set_timesteps(config.num_inference_steps)
@@ -72,11 +75,15 @@ class Guidance(object):
         self.src_prompt = self.config.src_prompt
         self.tgt_prompt = self.config.tgt_prompt
 
-        self.update_text_features(src_prompt=self.src_prompt, tgt_prompt=self.tgt_prompt)
+        self.update_text_features(
+            src_prompt=self.src_prompt, tgt_prompt=self.tgt_prompt
+        )
         self.null_text_feature = self.encode_text("")
 
         if use_lora:
-            self.pipe_lora = DiffusionPipeline.from_pretrained(config.sd_pretrained_model_or_path_lora).to(self.device)
+            self.pipe_lora = DiffusionPipeline.from_pretrained(
+                config.sd_pretrained_model_or_path_lora
+            ).to(self.device)
             self.single_model = False
             del self.pipe_lora.vae
             del self.pipe_lora.text_encoder
@@ -88,7 +95,9 @@ class Guidance(object):
             # FIXME: hard-coded dims
             self.camera_embedding = TimestepEmbedding(16, 1280).to(self.device)
             self.unet_lora.class_embedding = self.camera_embedding
-            self.scheduler_lora = DDIMScheduler.from_config(self.pipe_lora.scheduler.config)
+            self.scheduler_lora = DDIMScheduler.from_config(
+                self.pipe_lora.scheduler.config
+            )
             self.scheduler_lora.set_timesteps(config.num_inference_steps)
             self.pipe_lora.scheduler = self.scheduler_lora
 
@@ -104,9 +113,9 @@ class Guidance(object):
                     hidden_size = self.unet_lora.config.block_out_channels[-1]
                 elif name.startswith("up_blocks"):
                     block_id = int(name[len("up_blocks.")])
-                    hidden_size = list(reversed(self.unet_lora.config.block_out_channels))[
-                        block_id
-                    ]
+                    hidden_size = list(
+                        reversed(self.unet_lora.config.block_out_channels)
+                    )[block_id]
                 elif name.startswith("down_blocks"):
                     block_id = int(name[len("down_blocks.")])
                     hidden_size = self.unet_lora.config.block_out_channels[block_id]
@@ -168,9 +177,15 @@ class Guidance(object):
         self.scheduler.set_timesteps(self.config.num_inference_steps)
         timesteps = reversed(self.scheduler.timesteps)
 
-        min_step = 1 if self.config.min_step_ratio <= 0 else int(len(timesteps) * self.config.min_step_ratio)
+        min_step = (
+            1
+            if self.config.min_step_ratio <= 0
+            else int(len(timesteps) * self.config.min_step_ratio)
+        )
         max_step = (
-            len(timesteps) if self.config.max_step_ratio >= 1 else int(len(timesteps) * self.config.max_step_ratio)
+            len(timesteps)
+            if self.config.max_step_ratio >= 1
+            else int(len(timesteps) * self.config.max_step_ratio)
         )
         max_step = max(max_step, min_step + 1)
         idx = torch.randint(
@@ -217,7 +232,9 @@ class Guidance(object):
             encoder_hidden_states=text_embeddings,
         ).sample
         noise_pred_text, noise_pred_uncond = noise_pred.chunk(2)
-        noise_pred = noise_pred_uncond + cfg_scale * (noise_pred_text - noise_pred_uncond)
+        noise_pred = noise_pred_uncond + cfg_scale * (
+            noise_pred_text - noise_pred_uncond
+        )
 
         w = 1 - scheduler.alphas_cumprod[t].to(device)
         grad = w * (noise_pred - noise)
@@ -229,15 +246,15 @@ class Guidance(object):
             return dic
         else:
             return loss
-        
+
     def bridge_stage_two(
         self,
         im,
         prompt=None,
         reduction="mean",
         cfg_scale=30,
-        extra_tgt_prompts=', detailed high resolution, high quality, sharp',
-        extra_src_prompts=', oversaturated, smooth, pixelated, cartoon, foggy, hazy, blurry, bad structure, noisy, malformed',
+        extra_tgt_prompts=", detailed high resolution, high quality, sharp",
+        extra_src_prompts=", oversaturated, smooth, pixelated, cartoon, foggy, hazy, blurry, bad structure, noisy, malformed",
         noise=None,
         return_dict=False,
     ):
@@ -245,7 +262,9 @@ class Guidance(object):
         scheduler = self.scheduler
 
         # process text.
-        self.update_text_features(tgt_prompt=prompt + extra_tgt_prompts, src_prompt=prompt + extra_src_prompts)
+        self.update_text_features(
+            tgt_prompt=prompt + extra_tgt_prompts, src_prompt=prompt + extra_src_prompts
+        )
         tgt_text_embedding = self.tgt_text_feature
         src_text_embedding = self.src_text_feature
 
@@ -287,7 +306,6 @@ class Guidance(object):
         device = self.device
         scheduler = self.scheduler
 
-
         batch_size = im.shape[0]
         t, _ = self.sample_timestep(batch_size)
 
@@ -310,7 +328,9 @@ class Guidance(object):
             noise_pred_text, noise_pred_uncond = noise_pred.chunk(2)
             delta_C = cfg_scale * (noise_pred_text - noise_pred_uncond)
 
-        self.update_text_features(tgt_prompt='unrealistic, blurry, low quality, out of focus, ugly, low contrast, dull, dark, low-resolution, gloomy')
+        self.update_text_features(
+            tgt_prompt="unrealistic, blurry, low quality, out of focus, ugly, low contrast, dull, dark, low-resolution, gloomy"
+        )
         tgt_text_embedding = self.tgt_text_feature
         uncond_embedding = self.null_text_feature
         with torch.no_grad():
@@ -322,7 +342,9 @@ class Guidance(object):
             ).sample
             noise_pred_text_neg, _ = noise_pred.chunk(2)
 
-        delta_D = noise_pred_uncond if t < 200 else (noise_pred_uncond - noise_pred_text_neg)
+        delta_D = (
+            noise_pred_uncond if t < 200 else (noise_pred_uncond - noise_pred_text_neg)
+        )
 
         w = 1 - scheduler.alphas_cumprod[t].to(device)
         grad = w * (delta_C + delta_D)
@@ -340,14 +362,21 @@ class Guidance(object):
         if scheduler is None:
             scheduler = self.scheduler
 
-        prev_timestep = timestep - scheduler.config.num_train_timesteps // scheduler.num_inference_steps
+        prev_timestep = (
+            timestep
+            - scheduler.config.num_train_timesteps // scheduler.num_inference_steps
+        )
         alpha_prod_t = self.scheduler.alphas_cumprod[timestep]
         alpha_prod_t_prev = (
-            scheduler.alphas_cumprod[prev_timestep] if prev_timestep >= 0 else scheduler.final_alpha_cumprod
+            scheduler.alphas_cumprod[prev_timestep]
+            if prev_timestep >= 0
+            else scheduler.final_alpha_cumprod
         )
         beta_prod_t = 1 - alpha_prod_t
         beta_prod_t_prev = 1 - alpha_prod_t_prev
-        variance = (beta_prod_t_prev / beta_prod_t) * (1 - alpha_prod_t / alpha_prod_t_prev)
+        variance = (beta_prod_t_prev / beta_prod_t) * (
+            1 - alpha_prod_t / alpha_prod_t_prev
+        )
         return variance
 
     @contextmanager
@@ -358,7 +387,6 @@ class Guidance(object):
             yield unet
         finally:
             unet.class_embedding = class_embedding
-
 
     def vsd_loss(
         self,
@@ -378,7 +406,7 @@ class Guidance(object):
 
         batch_size = im.shape[0]
         camera_condition = torch.zeros([batch_size, 4, 4], device=device)
-        
+
         with torch.no_grad():
             # random timestamp
             t = torch.randint(
@@ -388,7 +416,7 @@ class Guidance(object):
                 dtype=torch.long,
                 device=self.device,
             )
-            
+
             noise = torch.randn_like(im)
 
             latents_noisy = scheduler.add_noise(im, noise, t)
