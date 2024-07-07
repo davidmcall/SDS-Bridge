@@ -1,6 +1,10 @@
 # SDS-Bridge
 
-## 1. Installation: Setup the environment
+
+
+## Experimenting in 2D
+
+We offer a simpler installation than Threestudio with minimal dependencies if you just want to run experiments in 2D. 
 
 ### Prerequisites
 
@@ -31,4 +35,12 @@ Install other dependencies with pip:
 ```bash
 cd 2D_experiments
 pip install -r requirements.txt
+```
+
+### Run 2D Generation
+
+In the `2D_experiments` directory...
+
+```bash
+python generate.py
 ```
