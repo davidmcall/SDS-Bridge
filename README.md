@@ -9,7 +9,7 @@ https://github.com/davidmcall/SDS-Bridge/assets/50497963/a5af3b0a-8edb-4acf-8c89
 
 ## Experimenting in 3D
 
-We provide our code for text-based NeRF optimization as an extension in the threestudio. To use it, please first install threestudio following the [official instructions](https://github.com/threestudio-project/threestudio?tab=readme-ov-file#installation).
+We provide our code for text-based NeRF optimization as an extension in Threestudio. To use it, please first install threestudio following the [official instructions](https://github.com/threestudio-project/threestudio?tab=readme-ov-file#installation).
 
 ### Extension Installation
 
