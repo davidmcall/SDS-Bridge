@@ -44,3 +44,5 @@ In the `2D_experiments` directory...
 ```bash
 python generate.py
 ```
+
+See `generate.py` for more options.
