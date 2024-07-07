@@ -15,3 +15,20 @@ conda create --name bridge -y python=3.8
 conda activate bridge
 pip install --upgrade pip
 ```
+
+### Dependencies
+
+Install PyTorch with CUDA
+
+For CUDA 11.8:
+
+```bash
+pip install torch==2.1.2+cu118 torchvision==0.16.2+cu118 --extra-index-url https://download.pytorch.org/whl/cu118
+```
+
+Install other dependencies with pip:
+
+```bash
+cd 2D_experiments
+pip install -r requirements.txt
+```
