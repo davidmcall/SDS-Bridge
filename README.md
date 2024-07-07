@@ -4,7 +4,7 @@
 
 **TLDR:** A unified framework to explain SDS and its variants, plus a new method that is fast & high-quality.
 
-https://github.com/davidmcall/SDS-Bridge/assets/50497963/31ccf4f7-9211-4678-bdd0-4aaaccfa6853
+https://github.com/davidmcall/SDS-Bridge/assets/50497963/a5af3b0a-8edb-4acf-8c89-02a14451257a
 
 
 ## Experimenting in 3D
