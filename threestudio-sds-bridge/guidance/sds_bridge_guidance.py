@@ -213,7 +213,7 @@ class SDSBridgeGuidance(BaseObject):
 
             latent_model_input = torch.cat([latents_noisy] * 2, dim=0)
             noise_pred = self.forward_unet(latent_model_input, torch.cat([t] * 2).to(device), text_embeddings)
-            noise_pred_text_src, noise_pred_text_tgt = noise_pred.chunk(3)
+            noise_pred_text_src, noise_pred_text_tgt = noise_pred.chunk(2)
             if self.phase_id == 1:
                 w = (1 - self.alphas[t]).view(-1, 1, 1, 1)
                 noise_pred_sds = noise_pred_text_src + self.cfg.guidance_scale * (noise_pred_text_tgt - noise_pred_text_src)
