@@ -110,7 +110,7 @@ for step in tqdm(range(args.n_steps)):
             )
         else:
             loss_dict = guidance.bridge_stage_two(
-                im=im, prompt=args.prompt, cfg_scale=args.cfg_scale, return_dict=True
+                im=im, prompt=args.prompt, cfg_scale=args.cfg_scale, extra_tgt_prompts=args.extra_tgt_prompt, extra_src_prompts=args.extra_src_prompt, return_dict=True
             )
 
     elif args.mode == "sds":
